@@ -1,0 +1,39 @@
+.container {
+	margin: 0 auto;
+	text-align: center;
+}
+
+button {
+	width: 95px;
+	height: 37px;
+	border-radius: 50%;
+}
+
+.field {
+	display: inline-grid;
+	grid-template-columns: repeat(12, 30px);
+	grid-template-rows: repeat(12, 30px);
+	border: 1px solid black;
+}
+
+.cell {
+	background-color: rgb(253, 232, 206);
+	border: 1px solid black;
+}
+
+.border {
+	text-align: center;
+	font-weight: bold;
+	color: rgb(41, 41, 148);
+	line-height: 30px;
+}
+
+.gameWrap {
+	display: flex;
+	justify-content: space-around;
+	background-color: rgb(150, 235, 209);
+}
+
+.ship {
+	background-color: darkgreen;
+}
