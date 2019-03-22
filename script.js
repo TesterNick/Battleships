@@ -3,6 +3,7 @@ let renderer = {
         let fieldDiv = document.createElement("div");
         fieldDiv.className = "field";
         wrapper.appendChild(fieldDiv);
+        field.div = fieldDiv;
         for (let i = 0; i < field.cells.length; i++) {
             let cell = field.cells[i];
             let cellDiv = document.createElement("div");
@@ -15,10 +16,33 @@ let renderer = {
 
     placeShips(ships, field) {
         for (let i = 0; i < ships.length; i++) {
-            for (let j = 0; j < ships[i].length; j++) {
-                let cell = field.getCellByName(ships[i][j]);
-                cell.div.className = "ship";
+            let div = document.createElement("div");
+            let cellSize = 30;
+            let shipWidth = cellSize;
+            let shipHeight = cellSize;
+            let startPoint = field.getCellByName(ships[i][0]).div;
+            let shipX = startPoint.offsetLeft;
+            let shipY = startPoint.offsetTop;
+            if (ships[i].length > 1) {
+                let cells = [];
+                for (let j = 0; j < ships[i].length; j++) {
+                    let cell = field.getCellByName(ships[i][j]);
+                    cells.push(cell);
+                }
+                if (cells[0].x == cells[1].x) {
+                    shipHeight *= cells.length;
+                } else {
+                    shipWidth *= cells.length;
+                }
             }
+            div.style.width = shipWidth + "px";
+            div.style.height = shipHeight + "px";
+            field.div.appendChild(div);
+            field.div.position = "relative";
+            div.style.position = "absolute";
+            div.style.left = shipX + "px";
+            div.style.top = shipY + "px";
+            div.className = "ship";
         }
     }
 };
@@ -164,6 +188,15 @@ let shipsCreator = {
         }
         return true;
     },
+
+    dragDropShips() {
+       let placeShips = document.querySelectorAll(div, ".ship");
+       let  newPlaceShips = document.querySelectorAll(div, ".cell");
+       
+       placeShips.addEventListener("dragstart", function() {
+        this.style.borderColor = "black";
+       })
+    }
 };
 
 let game = {
@@ -180,6 +213,7 @@ let game = {
         this.renderer.renderField(gameWrap, this.userField);
         this.renderer.renderField(gameWrap, this.rivalField);
         this.userShips = this.shipsCreator.createShips(this.userField);
+        //this.shipsCreator.dragDropShips();
         this.renderer.placeShips(this.userShips, this.userField);
     },
 };
@@ -187,5 +221,4 @@ let game = {
 
 function startGame() {
     game.startGame();
-    shipsCreator.dragDropShips();
 };
