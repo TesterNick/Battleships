@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-from game import Game, Player
+from game import Game
+from player import Player
 
 
 class GameAdmin:
