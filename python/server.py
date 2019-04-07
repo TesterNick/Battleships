@@ -7,31 +7,61 @@ import game_admin
 SERVER_ADDRESS = (HOST, PORT) = '', 8000
 
 
-class Server:
+class Response:
 
     def __init__(self):
+        self.status = ""
+        self.headers = []
+        self.body = ""
         self.game_admin = game_admin.GameAdmin()
 
-    # Редирект на файлы-заглушки до реализации фронт-енда
+    def add_header(self, header):
+        self.headers.append(header)
+
+    def response_post(self, client_address, message):
+        answer = self.game_admin.request(client_address, message)
+        self.status = "HTTP/1.1 200 OK"
+        self.body = bytes(answer)
+
+    def response_get(self, request):
+        try:
+            target = request.split(" ")[1]
+            page = ".." + target if target != "/" else "../index.html"
+            with open(page, "rb") as f:
+                self.status = "HTTP/1.1 200 OK"
+                self.headers.append(self.get_content_type_header(page))
+                self.body = f.read().decode()
+        except (IndexError, FileNotFoundError):
+            self.status = "HTTP/1.1 404 Not found"
+
     @staticmethod
-    def redirect(page):
-        page = page + ".html"
-        with open(page) as f:
-            return f.read()
+    def get_content_type_header(file):
+        extension = file.split(".")[-1]
+        if extension in ["html", "css"]:
+            return "Content-Type: text/{}".format(extension)
+        elif extension == "js":
+            return "Content-type: application/x-javascript"
+        else:
+            return ""
+
+    def to_string(self):
+        headers = "\n".join(self.headers)
+        string = "{}\n{}\n\n{}".format(self.status, headers, self.body)
+        return bytes(string, "UTF8")
+
+
+class Server:
 
     def handle_request(self, client_connection, client_address):
         request = client_connection.recv(1024).decode()
         message = self.get_message(request)
-        http_response = "HTTP/1.1 200 OK\nConnection: close\n\n"
+        http_response = Response()
+        http_response.add_header("Connection: close")
         if "POST" in request:
-            answer = self.game_admin.request(client_address, message)
-            if isinstance(answer, str):
-                http_response += self.redirect(answer)
-            else:
-                http_response += str(answer)
+            http_response.response_post(client_address, message)
         else:
-            http_response += self.redirect("index")
-        client_connection.sendall(bytes(http_response, "UTF8"))
+            http_response.response_get(request)
+        client_connection.sendall(http_response.to_string())
 
     @staticmethod
     def get_message(request):
