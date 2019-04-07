@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import socket
 
-import game_admin
+from game_admin import GameAdmin
 
 
 SERVER_ADDRESS = (HOST, PORT) = '', 8000
@@ -9,11 +9,11 @@ SERVER_ADDRESS = (HOST, PORT) = '', 8000
 
 class Response:
 
-    def __init__(self):
+    def __init__(self, admin):
         self.status = ""
         self.headers = []
         self.body = ""
-        self.game_admin = game_admin.GameAdmin()
+        self.game_admin = admin
 
     def add_header(self, header):
         self.headers.append(header)
@@ -52,10 +52,13 @@ class Response:
 
 class Server:
 
+    def __init__(self):
+        self.game_admin = GameAdmin()
+
     def handle_request(self, client_connection, client_address):
         request = client_connection.recv(1024).decode()
         message = self.get_message(request)
-        http_response = Response()
+        http_response = Response(self.game_admin)
         http_response.add_header("Connection: close")
         if "POST" in request:
             http_response.response_post(client_address, message)
