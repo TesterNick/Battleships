@@ -1,5 +1,8 @@
 class Game:
-
+    """
+    Main game class. Stores players, checks statuses
+    and implements game logic.
+    """
     def __init__(self, players):
         self.players = players
         self.attacker = self.players[0]
@@ -33,21 +36,21 @@ class Game:
                 else:
                     self.attacked.ships.remove(ship)
                     result = {shot: "sunk"}
-                    self.check_game_over()
+                    self._check_game_over()
                 self.attacker.last_shot = result
                 return result
         result = {shot: "miss"}
         self.attacker.last_shot = result
-        self.change_turn()
+        self._change_turn()
         return result
 
-    def check_game_over(self):
+    def _check_game_over(self):
         if len(self.attacked.ships) == 0:
             self.stage.set_next_stage()
             self.attacker.set_status_win()
             self.attacked.set_status_lose()
 
-    def change_turn(self):
+    def _change_turn(self):
         for player in self.players:
             if player.is_attacking():
                 player.set_status_wait()

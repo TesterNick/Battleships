@@ -78,7 +78,8 @@ class Player:
                 three_deck += 1
             elif len(ship) == 4:
                 four_deck += 1
-        return one_deck == 4 and two_deck == 3 and three_deck == 2 and four_deck == 1
+        return (one_deck == 4 and two_deck == 3 and
+                three_deck == 2 and four_deck == 1)
 
     @staticmethod
     def ships_are_intersected(ships):

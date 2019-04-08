@@ -8,7 +8,11 @@ SERVER_ADDRESS = (HOST, PORT) = '', 8000
 
 
 class Response:
-
+    """
+    Class generates  http responses for GET requests, and
+    adds http related information to the response generated
+    by the game admin for POST requests.
+    """
     def __init__(self, admin):
         self.status = ""
         self.headers = []

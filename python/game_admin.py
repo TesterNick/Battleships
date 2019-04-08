@@ -3,7 +3,10 @@ from player import Player
 
 
 class GameAdmin:
-
+    """
+    Class stores all the started games, players queue, and
+    handles requests from the server.
+    """
     def __init__(self):
         self.players_queue = []
         self.games = []
